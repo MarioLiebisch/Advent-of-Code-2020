@@ -5,6 +5,7 @@
 #include <map>
 #include <unordered_map>
 #include <sstream>
+#include <set>
 
 namespace aoc {
 
@@ -37,17 +38,48 @@ namespace aoc {
         }
     };
 
-    typedef std::unordered_map<std::string, std::string> Passport;
+    using Passport = std::unordered_map<std::string, std::string>;
+    using CustomsDeclaration = std::set<char>;
 
-    typedef std::map<std::size_t, char> MapDataLine;
-    typedef std::map<std::size_t, MapDataLine> MapData;
+    using MapDataLine  = std::map<std::size_t, char>;
+    using MapData = std::map<std::size_t, MapDataLine>;
     
+    using PackagingRule = std::pair<std::string, std::map<std::string, std::size_t>>;
+
     template<class T>
     auto convert(std::string input) -> T;
 
     template<>
     auto convert(std::string input) -> long {
         return std::stol(input);
+    }
+
+    template<>
+    auto convert(std::string input) -> PackagingRule {
+        PackagingRule rule;
+        // Cheating and skipping input validation, because …
+        std::size_t o = input.find("s contain ");
+        rule.first = input.substr(0, o);
+        o += 10;
+        for (;;) {
+            input = input.substr(o);
+
+            // done anyway or "no other bags"
+            if (input.empty() || input[0] == 'n') {
+                break;
+            }
+
+            const std::size_t n = std::stoll(input, &o);
+            const std::size_t o2 = input.find_first_of(",.", o + 1);
+            rule.second[input.substr(o + 1, o2 - o - (input[o2 - 1] == 's' ? 2 : 1))] = n;
+
+            o = o2 + 2;
+
+            if (o >= input.length()) {
+                break;
+            }
+        }
+        return rule;
     }
 
     template<>
@@ -135,8 +167,7 @@ namespace aoc {
         return ret;
     }
 
-    template<>
-    auto readFromFile<Passport, std::vector<Passport>>(const char* file, std::back_insert_iterator<std::vector<Passport>> target) -> std::size_t {
+    auto readFromFile(const char* file, std::back_insert_iterator<std::vector<Passport>> target) -> std::size_t {
         std::ifstream stream(file);
         std::string line;
         std::size_t count = 0;
@@ -161,6 +192,56 @@ namespace aoc {
         }
         if (set) {
             *target++ = np;
+            ++count;
+        }
+        return count;
+    }
+
+    auto readFromFile(const char* file, std::back_insert_iterator<std::vector<CustomsDeclaration>> target, bool strict) -> std::size_t {
+        std::ifstream stream(file);
+        std::string line;
+        std::size_t count = 0;
+        CustomsDeclaration nd;
+        bool set = false;
+        // No need to check for the stream/file
+        // If something is wrong, std::getline() returns false
+        while (std::getline(stream, line)) {
+            if (line.empty()) {
+                if (set) {
+                    *target++ = nd;
+                    nd.clear();
+                    set = false;
+                    ++count;
+                }
+            }
+            else if (strict) {
+                if (set) {
+                    std::set<char> temp;
+                    for (const auto& c : nd) {
+                        if (line.find(c) == std::string::npos) {
+                            temp.insert(c);
+                        }
+                    }
+                    for (const auto& c : temp) {
+                        nd.erase(c);
+                    }
+                }
+                else {
+                    for (const auto& c : line) {
+                        nd.insert(c);
+                    }
+                    set = true;
+                }
+            }
+            else {
+                for (const auto& c : line) {
+                    nd.insert(c);
+                }
+                set = true;
+            }
+        }
+        if (set) {
+            *target++ = nd;
             ++count;
         }
         return count;

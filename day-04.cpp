@@ -88,12 +88,12 @@ auto day04part2(const std::vector<aoc::Passport>& pps) -> std::size_t {
 auto main(int argc, char **argv) -> int {
     std::vector<aoc::Passport> passports;
 
-    aoc::readFromFile<aoc::Passport>("day-04-sample.txt", std::back_inserter(passports));
+    aoc::readFromFile("day-04-sample.txt", std::back_inserter(passports));
     std::cout << "Sample 1 solution: " << day04part1(passports) << "\n";
     std::cout << "Sample 2 solution: " << day04part2(passports) << "\n";
 
     passports.clear();
-    aoc::readFromFile<aoc::Passport>("day-04-input.txt", std::back_inserter(passports));
+    aoc::readFromFile("day-04-input.txt", std::back_inserter(passports));
     std::cout << "Part 1 solution: " << day04part1(passports) << "\n";
     std::cout << "Part 2 solution: " << day04part2(passports) << "\n";
 

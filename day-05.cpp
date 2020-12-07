@@ -16,8 +16,8 @@ auto day05part1(const std::vector<aoc::BoardingPass>& passes) -> unsigned int {
     return highest;
 }
 
-auto day05part2(std::vector<aoc::BoardingPass>& passes) -> std::size_t {
-    std::size_t last = 0;
+auto day05part2(std::vector<aoc::BoardingPass>& passes) -> unsigned int {
+    unsigned int last = 0;
 
     // Sort them all by ID
     std::sort(passes.begin(), passes.end());
