@@ -25,13 +25,8 @@ namespace aoc {
         unsigned int col = 0;
         unsigned int id = 0;
 
-        BoardingPass() {};
-        BoardingPass& operator=(const BoardingPass& other) {
-            row = other.row;
-            col = other.col;
-            id = other.id;
-            return *this;
-        }
+        BoardingPass() = default;
+        auto operator=(const BoardingPass& other) -> BoardingPass& = default;
 
         auto operator<(const BoardingPass& other) const -> bool {
             return id < other.id;
@@ -62,7 +57,9 @@ namespace aoc {
     template<>
     auto convert(std::string input) -> Instruction {
         Instruction ni;
-        if (input.length() < 5) return ni;
+        if (input.length() < 5) {
+            return ni;
+        }
         ni.param = std::stol(input.substr(4));
         ni.op = input.substr(0, 3);
         return ni;
@@ -126,7 +123,7 @@ namespace aoc {
         PasswordData ret;
 
         while (input[0] != ':') {
-            PasswordRule rule;
+            PasswordRule rule = {};
             std::size_t idx = 0;
             rule.minimum = std::stol(input, &idx);
             input = input.substr(idx + 1);
@@ -199,8 +196,9 @@ namespace aoc {
                 }
             }
             else {
-                for (const auto &kv : getKeyValuePairs(line))
+                for (const auto& kv : getKeyValuePairs(line)) {
                     np.emplace(kv);
+                }
                 set = true;
             }
         }
@@ -302,7 +300,7 @@ namespace aoc {
             signed int accumulator = 0;
             std::size_t ip = 0;
             for (;;) {
-                if (preCallback) {
+                if (preCallback != nullptr) {
                     if (!preCallback(ip, accumulator)) {
                         break;
                     }
