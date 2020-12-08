@@ -38,6 +38,11 @@ namespace aoc {
         }
     };
 
+    struct Instruction {
+        std::string op;
+        signed int param = 0;
+    };
+
     using Passport = std::unordered_map<std::string, std::string>;
     using CustomsDeclaration = std::set<char>;
 
@@ -52,6 +57,15 @@ namespace aoc {
     template<>
     auto convert(std::string input) -> long {
         return std::stol(input);
+    }
+
+    template<>
+    auto convert(std::string input) -> Instruction {
+        Instruction ni;
+        if (input.length() < 5) return ni;
+        ni.param = std::stol(input.substr(4));
+        ni.op = input.substr(0, 3);
+        return ni;
     }
 
     template<>
@@ -259,4 +273,56 @@ namespace aoc {
         return count;
     }
 
+    class VirtualMachine {
+        using Operation = void(*)(std::size_t& ip, signed int& accumulator, const signed int param);
+        using Callback = bool(*)(std::size_t& ip, signed int& accumulator);
+
+        const std::vector<Instruction> instructions;
+        const std::unordered_map<std::string, Operation> operations {
+            {"nop", [](std::size_t& ip, signed int& accumulator, const signed int param) { ++ip; }},
+            {"acc", [](std::size_t& ip, signed int& accumulator, const signed int param) { ++ip; accumulator += param; }},
+            {"jmp", [](std::size_t& ip, signed int& accumulator, const signed int param) { ip += param; }}
+        };
+
+        Callback preCallback = nullptr;
+    public:
+        VirtualMachine(const std::vector<Instruction> instructions) : instructions(instructions) {
+
+        }
+
+        void setPreCallback(Callback callback) {
+            preCallback = callback;
+        }
+
+        auto operator()() -> signed int {
+            if (instructions.empty()) {
+                return 0;
+            }
+
+            signed int accumulator = 0;
+            std::size_t ip = 0;
+            for (;;) {
+                if (preCallback) {
+                    if (!preCallback(ip, accumulator)) {
+                        break;
+                    }
+                }
+
+                if (ip >= instructions.size()) {
+                    break;
+                }
+
+                const Instruction& i = instructions[ip];
+                const auto& o = operations.find(i.op);
+                if (o != operations.end()) {
+                    o->second(ip, accumulator, i.param);
+                }
+                else {
+                    std::cerr << "Unknown opcode: " << i.op << " at " << ip << "!\n";
+                    return -1;
+                }
+            }
+            return accumulator;
+        }
+    };
 }
