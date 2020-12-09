@@ -55,6 +55,11 @@ namespace aoc {
     }
 
     template<>
+    auto convert(std::string input)->std::size_t {
+        return std::stoull(input);
+    }
+
+    template<>
     auto convert(std::string input) -> Instruction {
         Instruction ni;
         if (input.length() < 5) {
@@ -149,7 +154,6 @@ namespace aoc {
         }
         return line;
     }
-
 
     template<typename T, typename CT>
     auto readFromFile(const char *file, std::back_insert_iterator<CT> target) -> std::size_t {
