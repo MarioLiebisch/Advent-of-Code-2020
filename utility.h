@@ -41,8 +41,8 @@ namespace aoc {
     using Passport = std::unordered_map<std::string, std::string>;
     using CustomsDeclaration = std::set<char>;
 
-    using MapDataLine  = std::map<std::size_t, char>;
-    using MapData = std::map<std::size_t, MapDataLine>;
+    using MapDataLine  = std::unordered_map<std::size_t, char>;
+    using MapData = std::unordered_map<std::size_t, MapDataLine>;
     
     using PackagingRule = std::pair<std::string, std::map<std::string, std::size_t>>;
 
