@@ -9,6 +9,18 @@
 
 namespace aoc {
 
+    struct Position {
+        enum class Orientation : unsigned char {
+            EAST = 0,
+            SOUTH,
+            WEST,
+            NORTH,
+            COUNT
+        } orientation = Orientation::EAST;
+        int x = 0;
+        int y = 0;
+    };
+
     struct PasswordRule {
         std::size_t minimum;
         std::size_t maximum;
@@ -38,6 +50,11 @@ namespace aoc {
         signed int param = 0;
     };
 
+    struct NavInstruction {
+        char type;
+        int value;
+    };
+
     using Passport = std::unordered_map<std::string, std::string>;
     using CustomsDeclaration = std::set<char>;
 
@@ -55,8 +72,16 @@ namespace aoc {
     }
 
     template<>
-    auto convert(std::string input)->std::size_t {
+    auto convert(std::string input) -> std::size_t {
         return std::stoull(input);
+    }
+
+    template<>
+    auto convert(std::string input) -> NavInstruction {
+        NavInstruction ni;
+        ni.type = input[0];
+        ni.value = std::stol(input.substr(1));
+        return ni;
     }
 
     template<>
