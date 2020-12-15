@@ -13,7 +13,7 @@ auto day15part1(const char *file) -> std::size_t {
     std::ifstream stream(file);
     std::string line;
     std::getline(stream, line);
-    std::map<std::size_t, std::size_t> memory;
+    std::unordered_map<std::size_t, std::size_t> memory;
     bool preroll = true;
     std::size_t diff = 0;
     std::size_t num;
@@ -55,7 +55,7 @@ auto day15part2(const char *file) -> std::size_t {
     std::ifstream stream(file);
     std::string line;
     std::getline(stream, line);
-    std::map<std::size_t, std::size_t> memory;
+    std::unordered_map<std::size_t, std::size_t> memory;
     bool preroll = true;
     std::size_t diff = 0;
     std::size_t num;
