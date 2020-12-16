@@ -8,6 +8,7 @@
 #include <set>
 
 namespace aoc {
+    using TicketFieldRule = std::vector<std::pair<std::size_t, std::size_t>>;
 
     struct Position {
         enum class Orientation : unsigned char {
